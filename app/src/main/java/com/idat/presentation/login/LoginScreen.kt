@@ -6,7 +6,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -14,13 +16,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -89,174 +94,221 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.linearGradient(
-                    listOf(
-                        Color(0xFF7F00FF).copy(alpha = 0.45f),
-                        Color(0xFFE100FF).copy(alpha = 0.4f),
-                        Color(0xFF00C6FF).copy(alpha = 0.4f)
-                    )
-                )
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        
-        Scaffold(
-            containerColor = Color.Transparent,
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-        ) { paddingValues ->
-
+    Scaffold(
+        containerColor = Color(0xFFF5EDE8),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Panel Izquierdo - Formulario
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFF5EDE8))
+                    .padding(horizontal = 48.dp)
+                    .verticalScroll(rememberScrollState()),
                 contentAlignment = Alignment.Center
             ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-            Column(
-                modifier = Modifier.padding(26.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                // Logo
-                Image(
-                    painter = painterResource(id = R.drawable.ic_logo),
-                    contentDescription = "Logo",
-                    modifier = Modifier.size(90.dp)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "Bienvenido",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White
-                )
-
-                Text(
-                    text = "Inicia sesión para continuar",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.8f),
-                    modifier = Modifier.padding(bottom = 20.dp)
-                )
-
-                // Email
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Correo electrónico") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                        cursorColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                    // Logo H&M
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_logo_hm),
+                        contentDescription = "Logo H&M",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .padding(bottom = 32.dp)
                     )
-                )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    // Campo Email
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Username or E-mail") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC),
+                            focusedLabelColor = Color(0xFF222222),
+                            unfocusedLabelColor = Color(0xFF666666),
+                            cursorColor = Color(0xFF222222),
+                            focusedTextColor = Color(0xFF222222),
+                            unfocusedTextColor = Color(0xFF222222)
+                        )
+                    )
 
-                // Password
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Contraseña") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(
-                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                                tint = Color.White
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Campo Password
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                                    tint = Color(0xFF666666)
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC),
+                            focusedLabelColor = Color(0xFF222222),
+                            unfocusedLabelColor = Color(0xFF666666),
+                            cursorColor = Color(0xFF222222),
+                            focusedTextColor = Color(0xFF222222),
+                            unfocusedTextColor = Color(0xFF222222)
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Remember me y Forgot Password
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = false,
+                                onCheckedChange = { },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = Color(0xFFE50010),
+                                    uncheckedColor = Color(0xFF999999)
+                                )
+                            )
+                            Text(
+                                text = "Remember me",
+                                fontSize = 14.sp,
+                                color = Color(0xFF222222)
                             )
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.White.copy(alpha = 0.7f),
-                        cursorColor = Color.White,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(22.dp))
-
-                // Botón login
-                Button(
-                    onClick = { viewModel.iniciarSesion(email, password) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White.copy(alpha = 0.9f),
-                        contentColor = Color.Black
-                    )
-                ) {
-                    Text("Ingresar")
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // Botón Google - Muestra selector de cuentas vinculadas al dispositivo
-                OutlinedButton(
-                    onClick = {
-                        // Cerrar sesión previa para forzar el selector de cuentas
-                        googleSignInClient.signOut().addOnCompleteListener {
-                            // Intent que muestra todas las cuentas de Google del dispositivo
-                            val signInIntent = googleSignInClient.signInIntent
-                            googleSignInLauncher.launch(signInIntent)
+                        
+                        TextButton(onClick = { }) {
+                            Text(
+                                text = "Forgot Password?",
+                                fontSize = 14.sp,
+                                color = Color(0xFFE50010)
+                            )
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color.White
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_google),
-                        contentDescription = "Google",
-                        modifier = Modifier.size(22.dp),
-                        tint = Color.Unspecified
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(text = "Continuar con Google", color = Color.White)
-                }
+                    }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                TextButton(onClick = { navController.navigate("registro") }) {
-                    Text("Crear cuenta", color = Color.White)
+                    // Botón Login
+                    Button(
+                        onClick = { viewModel.iniciarSesion(email, password) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE50010),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            "Login",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Divider con "Or"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Divider(
+                            modifier = Modifier.weight(1f),
+                            color = Color(0xFFCCCCCC),
+                            thickness = 1.dp
+                        )
+                        Text(
+                            text = "  Or  ",
+                            fontSize = 14.sp,
+                            color = Color(0xFF666666)
+                        )
+                        Divider(
+                            modifier = Modifier.weight(1f),
+                            color = Color(0xFFCCCCCC),
+                            thickness = 1.dp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Botón Google
+                    OutlinedButton(
+                        onClick = {
+                            googleSignInClient.signOut().addOnCompleteListener {
+                                val signInIntent = googleSignInClient.signInIntent
+                                googleSignInLauncher.launch(signInIntent)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF222222)
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC))
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_google),
+                            contentDescription = "Google",
+                            modifier = Modifier.size(20.dp),
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Continue with Google",
+                            fontSize = 16.sp
+                        )
+                    }
                 }
             }
-        }
+
+            // Panel Derecho - Imagen
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                // Aquí puedes agregar una imagen de fondo si tienes una
+                // Por ahora usaremos el logo H&M grande
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_logo_hm),
+                        contentDescription = "H&M Store",
+                        modifier = Modifier.size(300.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
             }
         }
     }
