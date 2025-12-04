@@ -37,30 +37,35 @@ fun CarritoScreen(
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val total = productos.sumOf { it.precio * it.cantidad }
 
+    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+    val textSecondaryColor = if (isDarkTheme) Color(0xFFCCCCCC) else Color(0xFF666666)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(backgroundColor)
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Bolsa de Compras", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
+                    title = { Text("Bolsa de Compras", color = textColor, fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White
+                        containerColor = cardColor
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color(0xFF222222)
+                                tint = textColor
                             )
                         }
                     }
                 )
             },
-            containerColor = Color(0xFFFAFAFA)
+            containerColor = backgroundColor
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -81,18 +86,18 @@ fun CarritoScreen(
                                 Icons.Default.ShoppingCart,
                                 contentDescription = "Bolsa vacía",
                                 modifier = Modifier.size(100.dp),
-                                tint = Color(0xFFCCCCCC)
+                                tint = if (isDarkTheme) Color(0xFF666666) else Color(0xFFCCCCCC)
                             )
                             Text(
                                 text = "Tu bolsa está vacía",
                                 style = MaterialTheme.typography.headlineSmall,
-                                color = Color(0xFF222222),
+                                color = textColor,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = "Agrega productos para continuar",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color(0xFF666666)
+                                color = textSecondaryColor
                             )
                         }
                     }
@@ -107,6 +112,7 @@ fun CarritoScreen(
                         items(productos) { item ->
                             ProductoCarritoItem(
                                 item = item,
+                                isDarkTheme = isDarkTheme,
                                 onEliminar = { viewModel.eliminarDelCarrito(item.id) },
                                 onIncrementar = { viewModel.incrementarCantidad(item) },
                                 onDecrementar = { viewModel.decrementarCantidad(item) }
@@ -141,7 +147,7 @@ fun CarritoScreen(
                                     color = Color(0xFF222222)
                                 )
                                 Text(
-                                    text = "QAR ${String.format("%.2f", total)}",
+                                    text = "S/ ${String.format("%.2f", total)}",
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = Color(0xFF222222)
@@ -176,17 +182,21 @@ fun CarritoScreen(
 @Composable
 fun ProductoCarritoItem(
     item: ItemCarrito,
+    isDarkTheme: Boolean,
     onEliminar: () -> Unit,
     onIncrementar: () -> Unit,
     onDecrementar: () -> Unit
 ) {
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = cardColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -214,14 +224,14 @@ fun ProductoCarritoItem(
                     fontWeight = FontWeight.Normal,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF222222)
+                    color = textColor
                 )
 
                 Text(
-                    text = "QAR ${item.precio}",
+                    text = "S/ ${item.precio}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF222222)
+                    color = textColor
                 )
 
                 // Controles de cantidad

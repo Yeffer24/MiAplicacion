@@ -38,42 +38,33 @@ fun DetalleScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+    val textSecondaryColor = if (isDarkTheme) Color(0xFFCCCCCC) else Color(0xFF666666)
+
     LaunchedEffect(productoId) {
         viewModel.cargarProducto(productoId)
-    }
-
-    val gradientColors = if (isDarkTheme) {
-        listOf(
-            Color(0xFF1A1A2E),
-            Color(0xFF16213E),
-            Color(0xFF0F3460)
-        )
-    } else {
-        listOf(
-            Color(0xFF7F00FF).copy(alpha = 0.4f),
-            Color(0xFFE100FF).copy(alpha = 0.35f),
-            Color(0xFF00C6FF).copy(alpha = 0.35f)
-        )
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = gradientColors))
+            .background(backgroundColor)
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Detalle del Producto", color = Color.White) },
+                    title = { Text("Detalle del Producto", color = textColor, fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = cardColor
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     },
@@ -82,13 +73,13 @@ fun DetalleScreen(
                             Icon(
                                 imageVector = if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = if (esFavorito) "Quitar de favoritos" else "Agregar a favoritos",
-                                tint = if (esFavorito) Color(0xFFE100FF) else Color.White
+                                tint = if (esFavorito) Color(0xFFE50010) else textColor
                             )
                         }
                     }
                 )
             },
-            containerColor = Color.Transparent,
+            containerColor = Color(0xFFFAFAFA),
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
             producto?.let { prod ->
@@ -102,12 +93,10 @@ fun DetalleScreen(
                 ) {
                     // Card con imagen
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(8.dp, RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.15f)
+                            containerColor = Color.White
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
@@ -116,19 +105,18 @@ fun DetalleScreen(
                             contentDescription = prod.nombre,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp)
-                                .padding(16.dp)
+                                .height(400.dp)
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     // Card con información
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(8.dp, RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.15f)
+                            containerColor = Color.White
                         ),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
@@ -139,51 +127,29 @@ fun DetalleScreen(
                             // Nombre
                             Text(
                                 text = prod.nombre,
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-
-                            // Categoría
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = Color(0xFFE100FF).copy(alpha = 0.3f)
-                            ) {
-                                Text(
-                                    text = prod.categoria,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                                )
-                            }
-
-                            Divider(
-                                color = Color.White.copy(alpha = 0.2f),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Normal,
+                                color = textColor
                             )
 
                             // Precio
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Precio:",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                )
-                                Text(
-                                    text = "S/ ${prod.precio}",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFE100FF)
-                                )
-                            }
+                            Text(
+                                text = "S/ ${String.format("%.2f", prod.precio)}",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = textColor
+                            )
+
+                            // Categoría
+                            Text(
+                                text = prod.categoria,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (isDarkTheme) Color(0xFFCCCCCC) else Color(0xFF666666)
+                            )
 
                             Divider(
-                                color = Color.White.copy(alpha = 0.2f),
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                color = if (isDarkTheme) Color(0xFF404040) else Color(0xFFEEEEEE),
+                                modifier = Modifier.padding(vertical = 12.dp)
                             )
 
                             // Descripción
@@ -191,17 +157,19 @@ fun DetalleScreen(
                                 text = "Descripción",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = textColor
                             )
 
                             Text(
                                 text = prod.descripcion,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White.copy(alpha = 0.9f),
+                                color = Color(0xFF666666),
                                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     // Botón agregar al carrito
                     Button(
@@ -217,10 +185,10 @@ fun DetalleScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White.copy(alpha = 0.9f),
-                            contentColor = Color.Black
+                            containerColor = Color(0xFFE50010),
+                            contentColor = Color.White
                         )
                     ) {
                         Icon(
@@ -230,7 +198,7 @@ fun DetalleScreen(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            "Agregar al carrito",
+                            "Agregar a la Bolsa",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -242,7 +210,7 @@ fun DetalleScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.White)
+                CircularProgressIndicator(color = Color(0xFFE50010))
             }
         }
     }

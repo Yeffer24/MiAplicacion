@@ -34,30 +34,35 @@ fun GestionProductosScreen(
 ) {
     val productos by viewModel.productos.collectAsState()
     val busqueda by viewModel.busqueda.collectAsState()
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     var mostrarDialogoCrear by remember { mutableStateOf(false) }
     var mostrarDialogoEditar by remember { mutableStateOf<Producto?>(null) }
     var mostrarDialogoEliminar by remember { mutableStateOf<Producto?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(backgroundColor)
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Gestión de Productos", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
+                    title = { Text("Gestión de Productos", color = textColor, fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White
+                        containerColor = cardColor
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color(0xFF222222)
+                                tint = textColor
                             )
                         }
                     }
@@ -300,7 +305,7 @@ fun ProductoGestionItem(
                 Text(
                     text = "S/ ${producto.precio}",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFFE100FF),
+                    color = Color(0xFF222222),
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(

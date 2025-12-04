@@ -56,10 +56,16 @@ fun CatalogoScreen(
         viewModel.cargarProductos()
     }
 
+    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textPrimaryColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+    val textSecondaryColor = if (isDarkTheme) Color(0xFFCCCCCC) else Color(0xFF666666)
+    val dividerColor = if (isDarkTheme) Color(0xFF404040) else Color(0xFFEEEEEE)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(backgroundColor)
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -107,9 +113,9 @@ fun CatalogoScreen(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("Catálogo", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
+                        title = { Text("Catálogo", color = textPrimaryColor, fontWeight = FontWeight.Bold) },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.White
+                            containerColor = cardColor
                         ),
                         navigationIcon = {
                             IconButton(onClick = {
@@ -120,7 +126,7 @@ fun CatalogoScreen(
                                 Icon(
                                     Icons.Default.Menu,
                                     contentDescription = "Menú",
-                                    tint = Color(0xFF222222)
+                                    tint = textPrimaryColor
                                 )
                             }
                         },
@@ -129,13 +135,13 @@ fun CatalogoScreen(
                                 Icon(
                                     Icons.Default.ShoppingCart,
                                     contentDescription = "Bolsa",
-                                    tint = Color(0xFF222222)
+                                    tint = textPrimaryColor
                                 )
                             }
                         }
                     )
                 },
-                containerColor = Color(0xFFFAFAFA)
+                containerColor = backgroundColor
             ) { paddingValues ->
                 if (viewMode == "grid") {
                     LazyVerticalGrid(
@@ -203,16 +209,21 @@ fun DrawerPerfil(
 ) {
     val usuarioEmail = viewModel.obtenerEmailUsuario() ?: "usuario@ejemplo.com"
     val usuarioNombre = usuarioEmail.substringBefore("@")
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val drawerBgColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
+    val textSecondaryColor = if (isDarkTheme) Color(0xFFCCCCCC) else Color(0xFF666666)
+    val dividerColor = if (isDarkTheme) Color(0xFF404040) else Color(0xFFEEEEEE)
     
     ModalDrawerSheet(
         modifier = Modifier.width(320.dp),
-        drawerContainerColor = Color.White
+        drawerContainerColor = drawerBgColor
     ) {
         // Header con avatar y nombre
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(drawerBgColor)
                 .padding(24.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -238,18 +249,18 @@ fun DrawerPerfil(
                 text = usuarioNombre.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF222222)
+                color = textColor
             )
             
             // Email
             Text(
                 text = usuarioEmail,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF666666)
+                color = textSecondaryColor
             )
         }
         
-        Divider(color = Color(0xFFEEEEEE))
+        Divider(color = dividerColor)
         
         // Opciones del menú
         DrawerMenuItem(
@@ -293,7 +304,7 @@ fun DrawerPerfil(
         )
         
         Divider(
-            color = Color(0xFFEEEEEE),
+            color = dividerColor,
             modifier = Modifier.padding(vertical = 8.dp)
         )
         
@@ -495,6 +506,9 @@ fun ProductoGridItem(
     viewModel: CatalogoViewModel
 ) {
     var esFavorito by remember { mutableStateOf(false) }
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
 
     LaunchedEffect(producto.id) {
         esFavorito = viewModel.esFavorito(producto.id)
@@ -507,7 +521,7 @@ fun ProductoGridItem(
             .clickable { onClick() },
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = cardColor
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -553,17 +567,17 @@ fun ProductoGridItem(
                     fontWeight = FontWeight.Normal,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF222222)
+                    color = textColor
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // Precio
                 Text(
-                    text = "QAR ${producto.precio}",
+                    text = "S/ ${producto.precio}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF222222)
+                    color = textColor
                 )
             }
         }
@@ -627,7 +641,7 @@ fun ProductoCard(
 
                 // Precio
                 Text(
-                    text = "QAR ${producto.precio}",
+                    text = "S/ ${producto.precio}",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF222222)

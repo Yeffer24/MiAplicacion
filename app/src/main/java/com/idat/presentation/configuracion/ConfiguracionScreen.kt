@@ -38,7 +38,12 @@ fun ConfiguracionScreen(
     val email by viewModel.email.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     val successMessage by viewModel.successMessage.collectAsState()
+    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
+    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
+    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
 
     var showEditDialog by remember { mutableStateOf(false) }
     var showPasswordDialog by remember { mutableStateOf(false) }
@@ -67,27 +72,27 @@ fun ConfiguracionScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(backgroundColor)
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Configuración", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
+                    title = { Text("Configuración", color = textColor, fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White
+                        containerColor = cardColor
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color(0xFF222222)
+                                tint = textColor
                             )
                         }
                     }
                 )
             },
-            containerColor = Color(0xFFFAFAFA),
+            containerColor = backgroundColor,
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
             Column(
