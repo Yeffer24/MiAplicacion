@@ -67,35 +67,27 @@ fun ConfiguracionScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF7F00FF).copy(alpha = 0.4f),
-                        Color(0xFFE100FF).copy(alpha = 0.35f),
-                        Color(0xFF00C6FF).copy(alpha = 0.35f)
-                    )
-                )
-            )
+            .background(Color(0xFFFAFAFA))
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Configuración", color = Color.White) },
+                    title = { Text("Configuración", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = Color.White
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     }
                 )
             },
-            containerColor = Color.Transparent,
+            containerColor = Color(0xFFFAFAFA),
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
             Column(
@@ -109,13 +101,14 @@ fun ConfiguracionScreen(
                 // Card de Perfil
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(0.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    )
+                        containerColor = Color.White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -124,7 +117,7 @@ fun ConfiguracionScreen(
                             modifier = Modifier
                                 .size(80.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF7F00FF)),
+                                .background(Color(0xFFE50010)),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -138,18 +131,18 @@ fun ConfiguracionScreen(
                         // Email
                         Text(
                             text = email,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color(0xFF222222)
                         )
 
                         Button(
                             onClick = { showEditDialog = true },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.9f),
-                                contentColor = Color.Black
+                                containerColor = Color(0xFF222222),
+                                contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(4.dp)
                         ) {
                             Icon(
                                 Icons.Default.Edit,
@@ -162,33 +155,36 @@ fun ConfiguracionScreen(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 // Card de Seguridad
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(0.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    )
+                        containerColor = Color.White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
                             text = "Seguridad",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = Color(0xFF222222)
                         )
 
                         Button(
                             onClick = { showPasswordDialog = true },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White.copy(alpha = 0.9f),
-                                contentColor = Color.Black
+                                containerColor = Color(0xFF222222),
+                                contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(4.dp)
                         ) {
                             Icon(
                                 Icons.Default.Lock,

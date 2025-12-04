@@ -37,44 +37,30 @@ fun CarritoScreen(
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val total = productos.sumOf { it.precio * it.cantidad }
 
-    val gradientColors = if (isDarkTheme) {
-        listOf(
-            Color(0xFF1A1A2E),
-            Color(0xFF16213E),
-            Color(0xFF0F3460)
-        )
-    } else {
-        listOf(
-            Color(0xFF7F00FF).copy(alpha = 0.4f),
-            Color(0xFFE100FF).copy(alpha = 0.35f),
-            Color(0xFF00C6FF).copy(alpha = 0.35f)
-        )
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = gradientColors))
+            .background(Color(0xFFFAFAFA))
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Carrito de Compras", color = Color.White) },
+                    title = { Text("Bolsa de Compras", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = Color.White
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     }
                 )
             },
-            containerColor = Color.Transparent
+            containerColor = Color(0xFFFAFAFA)
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -93,20 +79,20 @@ fun CarritoScreen(
                         ) {
                             Icon(
                                 Icons.Default.ShoppingCart,
-                                contentDescription = "Carrito vacío",
+                                contentDescription = "Bolsa vacía",
                                 modifier = Modifier.size(100.dp),
-                                tint = Color.White.copy(alpha = 0.5f)
+                                tint = Color(0xFFCCCCCC)
                             )
                             Text(
-                                text = "Tu carrito está vacío",
+                                text = "Tu bolsa está vacía",
                                 style = MaterialTheme.typography.headlineSmall,
-                                color = Color.White,
+                                color = Color(0xFF222222),
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = "Agrega productos para continuar",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = Color(0xFF666666)
                             )
                         }
                     }
@@ -133,11 +119,11 @@ fun CarritoScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(0.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White.copy(alpha = 0.2f)
+                            containerColor = Color.White
                         ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp),
@@ -151,14 +137,14 @@ fun CarritoScreen(
                                 Text(
                                     text = "Total:",
                                     style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color(0xFF222222)
                                 )
                                 Text(
-                                    text = "S/ ${String.format("%.2f", total)}",
+                                    text = "QAR ${String.format("%.2f", total)}",
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFE100FF)
+                                    color = Color(0xFF222222)
                                 )
                             }
 
@@ -167,14 +153,14 @@ fun CarritoScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(56.dp),
-                                shape = RoundedCornerShape(16.dp),
+                                shape = RoundedCornerShape(4.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.White.copy(alpha = 0.9f),
-                                    contentColor = Color.Black
+                                    containerColor = Color(0xFFE50010),
+                                    contentColor = Color.White
                                 )
                             ) {
                                 Text(
-                                    text = "Proceder a la compra",
+                                    text = "Proceder al Pago",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -197,54 +183,51 @@ fun ProductoCarritoItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.15f)
+            containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Imagen del producto
             Image(
                 painter = rememberAsyncImagePainter(model = item.imagen),
                 contentDescription = item.nombre,
-                modifier = Modifier
-                    .size(80.dp)
+                modifier = Modifier.size(100.dp)
             )
 
             // Información del producto
             Column(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = item.nombre,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Normal,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.White
+                    color = Color(0xFF222222)
                 )
 
                 Text(
-                    text = "S/ ${item.precio}",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE100FF)
+                    text = "QAR ${item.precio}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF222222)
                 )
 
                 // Controles de cantidad
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     IconButton(
                         onClick = onDecrementar,
@@ -253,16 +236,16 @@ fun ProductoCarritoItem(
                         Icon(
                             Icons.Default.Remove,
                             contentDescription = "Decrementar",
-                            tint = Color.White,
+                            tint = Color(0xFF222222),
                             modifier = Modifier.size(20.dp)
                         )
                     }
 
                     Text(
                         text = "${item.cantidad}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Normal,
+                        color = Color(0xFF222222),
                         modifier = Modifier.widthIn(min = 30.dp)
                     )
 
@@ -273,7 +256,7 @@ fun ProductoCarritoItem(
                         Icon(
                             Icons.Default.Add,
                             contentDescription = "Incrementar",
-                            tint = Color.White,
+                            tint = Color(0xFF222222),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -288,9 +271,10 @@ fun ProductoCarritoItem(
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = "Eliminar",
-                    tint = Color.White.copy(alpha = 0.8f)
+                    tint = Color(0xFF999999)
                 )
             }
         }
     }
+    Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
 }

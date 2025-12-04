@@ -56,25 +56,10 @@ fun CatalogoScreen(
         viewModel.cargarProductos()
     }
 
-    // Colores dinámicos según el tema
-    val gradientColors = if (isDarkTheme) {
-        listOf(
-            Color(0xFF1A1A2E),
-            Color(0xFF16213E),
-            Color(0xFF0F3460)
-        )
-    } else {
-        listOf(
-            Color(0xFF7F00FF).copy(alpha = 0.4f),
-            Color(0xFFE100FF).copy(alpha = 0.35f),
-            Color(0xFF00C6FF).copy(alpha = 0.35f)
-        )
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = gradientColors))
+            .background(Color(0xFFFAFAFA))
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -122,9 +107,9 @@ fun CatalogoScreen(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("Catálogo", color = Color.White) },
+                        title = { Text("Catálogo", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.White.copy(alpha = 0.15f)
+                            containerColor = Color.White
                         ),
                         navigationIcon = {
                             IconButton(onClick = {
@@ -135,7 +120,7 @@ fun CatalogoScreen(
                                 Icon(
                                     Icons.Default.Menu,
                                     contentDescription = "Menú",
-                                    tint = Color.White
+                                    tint = Color(0xFF222222)
                                 )
                             }
                         },
@@ -143,14 +128,14 @@ fun CatalogoScreen(
                             IconButton(onClick = { navController.navigate("carrito") }) {
                                 Icon(
                                     Icons.Default.ShoppingCart,
-                                    contentDescription = "Carrito",
-                                    tint = Color.White
+                                    contentDescription = "Bolsa",
+                                    tint = Color(0xFF222222)
                                 )
                             }
                         }
                     )
                 },
-                containerColor = Color.Transparent
+                containerColor = Color(0xFFFAFAFA)
             ) { paddingValues ->
                 if (viewMode == "grid") {
                     LazyVerticalGrid(
@@ -216,39 +201,24 @@ fun DrawerPerfil(
 ) {
     val usuarioEmail = viewModel.obtenerEmailUsuario() ?: "usuario@ejemplo.com"
     val usuarioNombre = usuarioEmail.substringBefore("@")
-    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-    
-    val gradientColors = if (isDarkTheme) {
-        listOf(
-            Color(0xFF1A1A2E).copy(alpha = 0.9f),
-            Color(0xFF16213E).copy(alpha = 0.85f),
-            Color(0xFF0F3460).copy(alpha = 0.85f)
-        )
-    } else {
-        listOf(
-            Color(0xFF7F00FF).copy(alpha = 0.45f),
-            Color(0xFFE100FF).copy(alpha = 0.4f),
-            Color(0xFF00C6FF).copy(alpha = 0.4f)
-        )
-    }
     
     ModalDrawerSheet(
         modifier = Modifier.width(320.dp),
-        drawerContainerColor = Color.Transparent
+        drawerContainerColor = Color.White
     ) {
         // Header con avatar y nombre
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Brush.verticalGradient(colors = gradientColors))
+                .background(Color.White)
                 .padding(24.dp),
             horizontalAlignment = Alignment.Start
         ) {
             // Avatar circular
             Box(
                 modifier = Modifier
-                    .size(56.dp)
-                    .background(Color(0xFF7F00FF), CircleShape),
+                    .size(64.dp)
+                    .background(Color(0xFFE50010), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -266,18 +236,18 @@ fun DrawerPerfil(
                 text = usuarioNombre.replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color(0xFF222222)
             )
             
             // Email
             Text(
                 text = usuarioEmail,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.7f)
+                color = Color(0xFF666666)
             )
         }
         
-        Divider(color = Color.White.copy(alpha = 0.1f))
+        Divider(color = Color(0xFFEEEEEE))
         
         // Opciones del menú
         DrawerMenuItem(
@@ -321,7 +291,7 @@ fun DrawerPerfil(
         )
         
         Divider(
-            color = Color.White.copy(alpha = 0.1f),
+            color = Color(0xFFEEEEEE),
             modifier = Modifier.padding(vertical = 8.dp)
         )
         
@@ -330,7 +300,7 @@ fun DrawerPerfil(
             icon = Icons.Default.Logout,
             text = "Cerrar sesión",
             onClick = onCerrarSesion,
-            textColor = Color(0xFFFF4444)
+            textColor = Color(0xFFE50010)
         )
     }
 }
@@ -340,7 +310,7 @@ fun DrawerMenuItem(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     text: String,
     onClick: () -> Unit,
-    textColor: Color = Color.White,
+    textColor: Color = Color(0xFF222222),
     showArrow: Boolean = false
 ) {
     Surface(
@@ -351,13 +321,13 @@ fun DrawerMenuItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = text,
-                tint = textColor.copy(alpha = 0.8f),
+                tint = textColor,
                 modifier = Modifier.size(24.dp)
             )
             
@@ -374,7 +344,7 @@ fun DrawerMenuItem(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Ir",
-                    tint = Color.White.copy(alpha = 0.5f),
+                    tint = Color(0xFF999999),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -523,72 +493,61 @@ fun ProductoGridItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
+            .height(320.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.15f)
-        )
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Imagen
-            Image(
-                painter = rememberAsyncImagePainter(model = producto.imagen),
-                contentDescription = "Imagen de ${producto.nombre}",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Nombre
-            Text(
-                text = producto.nombre,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.White,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Precio
-            Text(
-                text = "S/ ${producto.precio}",
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFE100FF)
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Botón agregar
-            Button(
-                onClick = onAgregarAlCarrito,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White.copy(alpha = 0.9f),
-                    contentColor = Color.Black
-                ),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Icon(
-                    Icons.Default.ShoppingCart,
-                    contentDescription = "Agregar",
-                    modifier = Modifier.size(16.dp)
+            // Imagen con corazón de favorito
+            Box(modifier = Modifier.fillMaxWidth().height(220.dp)) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = producto.imagen),
+                    contentDescription = producto.nombre,
+                    modifier = Modifier.fillMaxSize()
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("Agregar", fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodySmall)
+                // Icono de favorito en la esquina superior derecha
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorito",
+                    tint = Color(0xFF222222),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp)
+                        .size(24.dp)
+                )
+            }
+
+            // Información del producto
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                // Nombre del producto
+                Text(
+                    text = producto.nombre,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFF222222)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Precio
+                Text(
+                    text = "QAR ${producto.precio}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF222222)
+                )
             }
         }
     }
@@ -604,79 +563,58 @@ fun ProductoCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .shadow(8.dp, RoundedCornerShape(20.dp))
-            .clickable { onClick() }, // sombra suave
-        shape = RoundedCornerShape(20.dp),
+            .clickable { onClick() },
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.15f)
+            containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-
+        Row(modifier = Modifier.padding(12.dp)) {
             // Imagen
             Image(
                 painter = rememberAsyncImagePainter(model = producto.imagen),
-                contentDescription = "Imagen de ${producto.nombre}",
+                contentDescription = producto.nombre,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
+                    .size(120.dp)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            // Nombre
-            Text(
-                text = producto.nombre,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.White
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Precio
-            Text(
-                text = "S/ ${producto.precio}",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFE100FF)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Descripción
-            Text(
-                text = producto.descripcion,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.White.copy(alpha = 0.8f)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Botón agregar al carrito
-            Button(
-                onClick = onAgregarAlCarrito,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White.copy(alpha = 0.9f),
-                    contentColor = Color.Black
-                )
+            // Información
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                Icon(
-                    Icons.Default.ShoppingCart,
-                    contentDescription = "Agregar",
-                    modifier = Modifier.size(20.dp)
+                // Nombre
+                Text(
+                    text = producto.nombre,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFF222222)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Agregar al carrito", fontWeight = FontWeight.Medium)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Descripción
+                Text(
+                    text = producto.descripcion,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color(0xFF666666)
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Precio
+                Text(
+                    text = "QAR ${producto.precio}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF222222)
+                )
             }
         }
     }
