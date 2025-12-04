@@ -51,6 +51,20 @@ class CatalogoViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorito(producto: Producto) {
+        viewModelScope.launch {
+            if (repository.esFavorito(producto.id)) {
+                repository.eliminarDeFavoritos(producto.id)
+            } else {
+                repository.agregarAFavoritos(producto)
+            }
+        }
+    }
+
+    suspend fun esFavorito(productoId: String): Boolean {
+        return repository.esFavorito(productoId)
+    }
+
     fun cerrarSesion() {
         firebaseAuth.signOut()
     }

@@ -34,43 +34,27 @@ fun PersonalizacionScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = if (isDarkTheme) {
-                        listOf(
-                            Color(0xFF1A1A2E),
-                            Color(0xFF16213E),
-                            Color(0xFF0F3460)
-                        )
-                    } else {
-                        listOf(
-                            Color(0xFF7F00FF).copy(alpha = 0.4f),
-                            Color(0xFFE100FF).copy(alpha = 0.35f),
-                            Color(0xFF00C6FF).copy(alpha = 0.35f)
-                        )
-                    }
-                )
-            )
+            .background(Color(0xFFFAFAFA))
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Personalización", color = Color.White) },
+                    title = { Text("Personalización", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = Color.White
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     }
                 )
             },
-            containerColor = Color.Transparent
+            containerColor = Color(0xFFFAFAFA)
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -83,10 +67,11 @@ fun PersonalizacionScreen(
                 // Tema
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(0.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    )
+                        containerColor = Color.White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp),
@@ -104,7 +89,7 @@ fun PersonalizacionScreen(
                                 Icon(
                                     imageVector = if (isDarkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
                                     contentDescription = "Tema",
-                                    tint = Color.White,
+                                    tint = Color(0xFF222222),
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Column {
@@ -112,12 +97,12 @@ fun PersonalizacionScreen(
                                         text = "Tema Oscuro",
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                        color = Color(0xFF222222)
                                     )
                                     Text(
                                         text = if (isDarkTheme) "Activado" else "Desactivado",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White.copy(alpha = 0.7f)
+                                        color = Color(0xFF666666)
                                     )
                                 }
                             }
@@ -125,21 +110,24 @@ fun PersonalizacionScreen(
                                 checked = isDarkTheme,
                                 onCheckedChange = { viewModel.toggleTheme() },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color(0xFFE100FF),
-                                    checkedTrackColor = Color(0xFFE100FF).copy(alpha = 0.5f)
+                                    checkedThumbColor = Color(0xFFE50010),
+                                    checkedTrackColor = Color(0xFFE50010).copy(alpha = 0.5f)
                                 )
                             )
                         }
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 // Vista del Catálogo
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(0.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
-                    )
+                        containerColor = Color.White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp),
@@ -149,7 +137,7 @@ fun PersonalizacionScreen(
                             text = "Vista del Catálogo",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = Color(0xFF222222)
                         )
 
                         Row(
@@ -162,11 +150,11 @@ fun PersonalizacionScreen(
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     containerColor = if (viewMode == "grid") 
-                                        Color(0xFFE100FF).copy(alpha = 0.3f) 
+                                        Color(0xFFE50010).copy(alpha = 0.1f) 
                                     else Color.Transparent,
-                                    contentColor = Color.White
+                                    contentColor = Color(0xFF222222)
                                 ),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(4.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -187,11 +175,11 @@ fun PersonalizacionScreen(
                                 modifier = Modifier.weight(1f),
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     containerColor = if (viewMode == "list") 
-                                        Color(0xFFE100FF).copy(alpha = 0.3f) 
+                                        Color(0xFFE50010).copy(alpha = 0.1f) 
                                     else Color.Transparent,
-                                    contentColor = Color.White
+                                    contentColor = Color(0xFF222222)
                                 ),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(4.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,

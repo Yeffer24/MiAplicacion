@@ -43,29 +43,21 @@ fun GestionProductosScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF7F00FF).copy(alpha = 0.4f),
-                        Color(0xFFE100FF).copy(alpha = 0.35f),
-                        Color(0xFF00C6FF).copy(alpha = 0.35f)
-                    )
-                )
-            )
+            .background(Color(0xFFFAFAFA))
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Gestión de Productos", color = Color.White) },
+                    title = { Text("Gestión de Productos", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = Color.White
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     }
@@ -74,14 +66,14 @@ fun GestionProductosScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { mostrarDialogoCrear = true },
-                    containerColor = Color(0xFFE100FF),
+                    containerColor = Color(0xFFE50010),
                     contentColor = Color.White
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Agregar producto")
                 }
             },
             snackbarHost = { SnackbarHost(snackbarHostState) },
-            containerColor = Color.Transparent
+            containerColor = Color(0xFFFAFAFA)
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -94,25 +86,25 @@ fun GestionProductosScreen(
                     value = busqueda,
                     onValueChange = { viewModel.setBusqueda(it) },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Buscar productos...", color = Color.White.copy(alpha = 0.7f)) },
+                    placeholder = { Text("Buscar productos...", color = Color(0xFF666666)) },
                     leadingIcon = {
-                        Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color.White)
+                        Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color(0xFF222222))
                     },
                     trailingIcon = {
                         if (busqueda.isNotEmpty()) {
                             IconButton(onClick = { viewModel.setBusqueda("") }) {
-                                Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = Color.White)
+                                Icon(Icons.Default.Close, contentDescription = "Limpiar", tint = Color(0xFF222222))
                             }
                         }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedBorderColor = Color.White,
-                        unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
-                        cursorColor = Color.White
+                        focusedTextColor = Color(0xFF222222),
+                        unfocusedTextColor = Color(0xFF222222),
+                        focusedBorderColor = Color(0xFF222222),
+                        unfocusedBorderColor = Color(0xFFCCCCCC),
+                        cursorColor = Color(0xFF222222)
                     ),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(4.dp)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -131,18 +123,18 @@ fun GestionProductosScreen(
                                 Icons.Default.ShoppingCart,
                                 contentDescription = "Sin productos",
                                 modifier = Modifier.size(100.dp),
-                                tint = Color.White.copy(alpha = 0.5f)
+                                tint = Color(0xFFCCCCCC)
                             )
                             Text(
                                 text = "No hay productos",
                                 style = MaterialTheme.typography.headlineSmall,
-                                color = Color.White,
+                                color = Color(0xFF222222),
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = "Presiona + para agregar",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = Color(0xFF666666)
                             )
                         }
                     }

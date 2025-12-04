@@ -150,7 +150,9 @@ fun CatalogoScreen(
                             ProductoGridItem(
                                 producto = producto,
                                 onAgregarAlCarrito = { viewModel.agregarAlCarrito(producto) },
-                                onClick = { navController.navigate("detalle/${producto.id}") }
+                                onClick = { navController.navigate("detalle/${producto.id}") },
+                                onToggleFavorito = { viewModel.toggleFavorito(producto) },
+                                viewModel = viewModel
                             )
                         }
                     }
@@ -488,8 +490,16 @@ fun DialogoConfirmacionCerrarSesion(
 fun ProductoGridItem(
     producto: Producto,
     onAgregarAlCarrito: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onToggleFavorito: () -> Unit,
+    viewModel: CatalogoViewModel
 ) {
+    var esFavorito by remember { mutableStateOf(false) }
+
+    LaunchedEffect(producto.id) {
+        esFavorito = viewModel.esFavorito(producto.id)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -512,15 +522,22 @@ fun ProductoGridItem(
                     modifier = Modifier.fillMaxSize()
                 )
                 // Icono de favorito en la esquina superior derecha
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorito",
-                    tint = Color(0xFF222222),
+                IconButton(
+                    onClick = {
+                        onToggleFavorito()
+                        esFavorito = !esFavorito
+                    },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(12.dp)
-                        .size(24.dp)
-                )
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorito",
+                        tint = if (esFavorito) Color(0xFFE50010) else Color(0xFFCCCCCC),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
 
             // Información del producto

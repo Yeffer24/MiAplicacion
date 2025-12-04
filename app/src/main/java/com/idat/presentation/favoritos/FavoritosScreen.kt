@@ -35,44 +35,30 @@ fun FavoritosScreen(
     val productos by viewModel.favoritos.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
 
-    val gradientColors = if (isDarkTheme) {
-        listOf(
-            Color(0xFF1A1A2E),
-            Color(0xFF16213E),
-            Color(0xFF0F3460)
-        )
-    } else {
-        listOf(
-            Color(0xFF7F00FF).copy(alpha = 0.4f),
-            Color(0xFFE100FF).copy(alpha = 0.35f),
-            Color(0xFF00C6FF).copy(alpha = 0.35f)
-        )
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = gradientColors))
+            .background(Color(0xFFFAFAFA))
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Mis Favoritos", color = Color.White) },
+                    title = { Text("Mis Favoritos", color = Color(0xFF222222), fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White.copy(alpha = 0.15f)
+                        containerColor = Color.White
                     ),
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
-                                tint = Color.White
+                                tint = Color(0xFF222222)
                             )
                         }
                     }
                 )
             },
-            containerColor = Color.Transparent
+            containerColor = Color(0xFFFAFAFA)
         ) { paddingValues ->
             if (productos.isEmpty()) {
                 // Sin favoritos
@@ -88,16 +74,19 @@ fun FavoritosScreen(
                             Icons.Default.Favorite,
                             contentDescription = "Sin favoritos",
                             modifier = Modifier.size(100.dp),
-                            tint = Color.White.copy(alpha = 0.5f)
+                            tint = Color(0xFFCCCCCC)
                         )
                         Text(
                             text = "No tienes favoritos",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = Color.White,
+                            color = Color(0xFF222222),
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "Agrega productos que te gusten",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color(0xFF666666)
+                        )
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.White.copy(alpha = 0.7f)
                         )
@@ -137,25 +126,24 @@ fun FavoritoItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.15f)
+            containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Imagen
             Image(
                 painter = rememberAsyncImagePainter(model = producto.imagen),
                 contentDescription = producto.nombre,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(100.dp)
             )
 
             // Información
@@ -167,24 +155,24 @@ fun FavoritoItem(
             ) {
                 Text(
                     text = producto.nombre,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Normal,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.White
+                    color = Color(0xFF222222)
                 )
 
                 Text(
-                    text = "S/ ${producto.precio}",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFFE100FF)
+                    text = "QAR ${producto.precio}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF222222)
                 )
 
                 Text(
                     text = producto.categoria,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.7f)
+                    color = Color(0xFF666666)
                 )
             }
 
@@ -196,9 +184,10 @@ fun FavoritoItem(
                 Icon(
                     Icons.Default.Delete,
                     contentDescription = "Eliminar",
-                    tint = Color.White.copy(alpha = 0.8f)
+                    tint = Color(0xFF999999)
                 )
             }
         }
     }
+    Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
 }
