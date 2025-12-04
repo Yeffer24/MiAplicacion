@@ -98,25 +98,19 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         containerColor = Color(0xFFF5EDE8),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.Center
         ) {
-            // Panel Izquierdo - Formulario
-            Box(
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(Color(0xFFF5EDE8))
-                    .padding(horizontal = 48.dp)
-                    .verticalScroll(rememberScrollState()),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(0.85f)
+                    .padding(horizontal = 32.dp, vertical = 48.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(0.85f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
                     // Logo H&M
                     Image(
                         painter = painterResource(id = R.drawable.ic_logo_hm),
@@ -285,29 +279,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                             fontSize = 16.sp
                         )
                     }
-                }
-            }
-
-            // Panel Derecho - Imagen
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
-                // Aquí puedes agregar una imagen de fondo si tienes una
-                // Por ahora usaremos el logo H&M grande
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_logo_hm),
-                        contentDescription = "H&M Store",
-                        modifier = Modifier.size(300.dp),
-                        contentScale = ContentScale.Fit
-                    )
                 }
             }
         }
