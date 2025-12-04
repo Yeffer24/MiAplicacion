@@ -87,9 +87,6 @@ fun FavoritosScreen(
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color(0xFF666666)
                         )
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White.copy(alpha = 0.7f)
-                        )
                     }
                 }
             } else {
