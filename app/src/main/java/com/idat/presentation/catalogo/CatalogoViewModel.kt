@@ -61,7 +61,7 @@ class CatalogoViewModel @Inject constructor(
         }
     }
 
-    suspend fun esFavorito(productoId: String): Boolean {
+    suspend fun esFavorito(productoId: Int): Boolean {
         return repository.esFavorito(productoId)
     }
 
