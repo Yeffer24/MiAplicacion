@@ -279,7 +279,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                             fontSize = 16.sp
                         )
                     }
-                }
             }
         }
     }
