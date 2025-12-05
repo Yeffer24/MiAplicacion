@@ -1,11 +1,14 @@
 package com.idat.data.local.entity
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "carrito")
+@Entity(
+    tableName = "carrito",
+    primaryKeys = ["id", "userId"]
+)
 data class CarritoEntity(
-    @PrimaryKey val id: Int,
+    val id: Int,
+    val userId: String,
     val title: String,
     val price: Double,
     val description: String,

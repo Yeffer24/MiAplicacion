@@ -11,8 +11,8 @@ import com.idat.data.local.entity.CarritoEntity
 @Dao
 interface CarritoDao {
 
-    @Query("SELECT * FROM carrito")
-    fun obtenerCarrito(): Flow<List<CarritoEntity>>
+    @Query("SELECT * FROM carrito WHERE userId = :userId")
+    fun obtenerCarrito(userId: String): Flow<List<CarritoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(item: CarritoEntity)
@@ -20,12 +20,12 @@ interface CarritoDao {
     @Update
     suspend fun actualizar(item: CarritoEntity)
 
-    @Query("DELETE FROM carrito WHERE id = :productoId")
-    suspend fun eliminarPorId(productoId: Int)
+    @Query("DELETE FROM carrito WHERE id = :productoId AND userId = :userId")
+    suspend fun eliminarPorId(productoId: Int, userId: String)
 
-    @Query("DELETE FROM carrito")
-    suspend fun limpiarCarrito()
+    @Query("DELETE FROM carrito WHERE userId = :userId")
+    suspend fun limpiarCarrito(userId: String)
 
-    @Query("SELECT * FROM carrito WHERE id = :productoId")
-    suspend fun obtenerPorId(productoId: Int): CarritoEntity?
+    @Query("SELECT * FROM carrito WHERE id = :productoId AND userId = :userId")
+    suspend fun obtenerPorId(productoId: Int, userId: String): CarritoEntity?
 }

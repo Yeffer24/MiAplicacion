@@ -11,7 +11,7 @@ import com.idat.data.local.entity.FavoritoEntity
 
 @Database(
     entities = [ProductoEntity::class, CarritoEntity::class, FavoritoEntity::class],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

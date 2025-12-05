@@ -10,18 +10,18 @@ import com.idat.data.local.entity.FavoritoEntity
 @Dao
 interface FavoritoDao {
 
-    @Query("SELECT * FROM favoritos")
-    fun obtenerFavoritos(): Flow<List<FavoritoEntity>>
+    @Query("SELECT * FROM favoritos WHERE userId = :userId")
+    fun obtenerFavoritos(userId: String): Flow<List<FavoritoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(item: FavoritoEntity)
 
-    @Query("DELETE FROM favoritos WHERE id = :productoId")
-    suspend fun eliminarPorId(productoId: Int)
+    @Query("DELETE FROM favoritos WHERE id = :productoId AND userId = :userId")
+    suspend fun eliminarPorId(productoId: Int, userId: String)
 
-    @Query("SELECT * FROM favoritos WHERE id = :productoId")
-    suspend fun obtenerPorId(productoId: Int): FavoritoEntity?
+    @Query("SELECT * FROM favoritos WHERE id = :productoId AND userId = :userId")
+    suspend fun obtenerPorId(productoId: Int, userId: String): FavoritoEntity?
 
-    @Query("DELETE FROM favoritos")
-    suspend fun limpiarFavoritos()
+    @Query("DELETE FROM favoritos WHERE userId = :userId")
+    suspend fun limpiarFavoritos(userId: String)
 }

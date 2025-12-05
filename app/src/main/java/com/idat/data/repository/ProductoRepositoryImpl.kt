@@ -1,5 +1,6 @@
 package com.idat.data.repository
 
+import com.google.firebase.auth.FirebaseAuth
 import com.idat.domain.model.Producto
 import com.idat.domain.model.ItemCarrito
 import com.idat.domain.repository.ProductoRepository
@@ -19,8 +20,13 @@ class ProductoRepositoryImpl @Inject constructor(
     private val productoDao: ProductoDao,
     private val carritoDao: CarritoDao,
     private val favoritoDao: FavoritoDao,
-    private val apiService: ProductoApiService
+    private val apiService: ProductoApiService,
+    private val auth: FirebaseAuth
 ) : ProductoRepository {
+
+    private fun getUserId(): String {
+        return auth.currentUser?.uid ?: "guest"
+    }
 
     override suspend fun obtenerProductos(): List<Producto> {
         // Obtener de la API y guardar en local
@@ -55,8 +61,9 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun agregarProductoAlCarrito(producto: Producto) {
+        val userId = getUserId()
         // Verificar si el producto ya existe en el carrito
-        val itemExistente = carritoDao.obtenerPorId(producto.id)
+        val itemExistente = carritoDao.obtenerPorId(producto.id, userId)
         
         if (itemExistente != null) {
             // Si existe, incrementar la cantidad
@@ -66,6 +73,7 @@ class ProductoRepositoryImpl @Inject constructor(
             // Si no existe, agregarlo con cantidad 1
             val entity = CarritoEntity(
                 id = producto.id,
+                userId = userId,
                 title = producto.nombre,
                 price = producto.precio,
                 description = producto.descripcion,
@@ -78,7 +86,8 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun obtenerCarrito(): Flow<List<ItemCarrito>> {
-        return carritoDao.obtenerCarrito().map { lista ->
+        val userId = getUserId()
+        return carritoDao.obtenerCarrito(userId).map { lista ->
             lista.map {
                 ItemCarrito(
                     id = it.id,
@@ -94,18 +103,20 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun eliminarProductoDelCarrito(productoId: Int) {
-        carritoDao.eliminarPorId(productoId)
+        val userId = getUserId()
+        carritoDao.eliminarPorId(productoId, userId)
     }
 
     override suspend fun actualizarCantidad(productoId: Int, cantidad: Int) {
-        val item = carritoDao.obtenerPorId(productoId)
+        val userId = getUserId()
+        val item = carritoDao.obtenerPorId(productoId, userId)
         item?.let {
             if (cantidad > 0) {
                 val itemActualizado = it.copy(cantidad = cantidad)
                 carritoDao.actualizar(itemActualizado)
             } else {
                 // Si la cantidad es 0, eliminar del carrito
-                carritoDao.eliminarPorId(productoId)
+                carritoDao.eliminarPorId(productoId, userId)
             }
         }
     }
@@ -126,8 +137,10 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun agregarAFavoritos(producto: Producto) {
+        val userId = getUserId()
         val entity = FavoritoEntity(
             id = producto.id,
+            userId = userId,
             title = producto.nombre,
             price = producto.precio,
             description = producto.descripcion,
@@ -138,11 +151,13 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun eliminarDeFavoritos(productoId: Int) {
-        favoritoDao.eliminarPorId(productoId)
+        val userId = getUserId()
+        favoritoDao.eliminarPorId(productoId, userId)
     }
 
     override suspend fun obtenerFavoritos(): Flow<List<Producto>> {
-        return favoritoDao.obtenerFavoritos().map { lista ->
+        val userId = getUserId()
+        return favoritoDao.obtenerFavoritos(userId).map { lista ->
             lista.map {
                 Producto(
                     id = it.id,
@@ -159,7 +174,8 @@ class ProductoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun esFavorito(productoId: Int): Boolean {
-        return favoritoDao.obtenerPorId(productoId) != null
+        val userId = getUserId()
+        return favoritoDao.obtenerPorId(productoId, userId) != null
     }
 
     // ========== NUEVOS MÉTODOS CRUD ==========
