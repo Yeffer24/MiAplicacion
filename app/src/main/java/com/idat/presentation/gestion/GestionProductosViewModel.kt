@@ -2,6 +2,7 @@ package com.idat.presentation.gestion
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.idat.data.local.preferences.UserPreferencesManager
 import com.idat.domain.model.Producto
 import com.idat.domain.repository.ProductoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GestionProductosViewModel @Inject constructor(
-    private val repository: ProductoRepository
+    private val repository: ProductoRepository,
+    private val userPreferencesManager: UserPreferencesManager
 ) : ViewModel() {
 
     // Lista de productos desde Room (se actualiza automáticamente)
@@ -29,6 +31,12 @@ class GestionProductosViewModel @Inject constructor(
 
     private val _productosFiltrados = MutableStateFlow<List<Producto>>(emptyList())
     val productosFiltrados: StateFlow<List<Producto>> = _productosFiltrados
+
+    val isDarkTheme = userPreferencesManager.isDarkTheme.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
 
     init {
         // Observar cambios en búsqueda

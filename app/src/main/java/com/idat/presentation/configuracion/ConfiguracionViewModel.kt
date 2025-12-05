@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.idat.data.local.preferences.UserPreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfiguracionViewModel @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val preferencesManager: UserPreferencesManager
 ) : ViewModel() {
 
     private val _email = MutableStateFlow("")
@@ -24,8 +26,16 @@ class ConfiguracionViewModel @Inject constructor(
     private val _successMessage = MutableStateFlow<String?>(null)
     val successMessage: StateFlow<String?> = _successMessage
 
+    private val _isDarkTheme = MutableStateFlow(false)
+    val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
+
     init {
         _email.value = auth.currentUser?.email ?: ""
+        viewModelScope.launch {
+            preferencesManager.isDarkTheme.collect { isDark ->
+                _isDarkTheme.value = isDark
+            }
+        }
     }
 
     fun actualizarEmail(newEmail: String) {
