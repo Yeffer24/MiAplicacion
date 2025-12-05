@@ -1,5 +1,6 @@
 package com.idat.di.modules
 
+import com.google.firebase.auth.FirebaseAuth
 import com.idat.data.repository.ProductoRepositoryImpl
 import com.idat.domain.repository.ProductoRepository
 import com.idat.data.local.dao.ProductoDao
@@ -22,8 +23,9 @@ object RepositoryModule {
         productoDao: ProductoDao,
         carritoDao: CarritoDao,
         favoritoDao: FavoritoDao,
-        apiService: ProductoApiService
+        apiService: ProductoApiService,
+        auth: FirebaseAuth
     ): ProductoRepository {
-        return ProductoRepositoryImpl(productoDao, carritoDao, favoritoDao, apiService)
+        return ProductoRepositoryImpl(productoDao, carritoDao, favoritoDao, apiService, auth)
     }
 }
