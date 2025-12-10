@@ -106,6 +106,12 @@ fun CatalogoScreen(
                             drawerState.close()
                         }
                         navController.navigate("gestion")
+                    },
+                    onNavigateToAyuda = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate("ayuda")
                     }
                 )
             }
@@ -205,7 +211,8 @@ fun DrawerPerfil(
     onNavigateToFavoritos: () -> Unit,
     onNavigateToPersonalizacion: () -> Unit,
     onNavigateToConfiguracion: () -> Unit,
-    onNavigateToGestion: () -> Unit
+    onNavigateToGestion: () -> Unit,
+    onNavigateToAyuda: () -> Unit
 ) {
     val usuarioEmail = viewModel.obtenerEmailUsuario() ?: "usuario@ejemplo.com"
     val usuarioNombre = usuarioEmail.substringBefore("@")
@@ -299,7 +306,10 @@ fun DrawerPerfil(
         DrawerMenuItem(
             icon = Icons.Default.Help,
             text = "Ayuda",
-            onClick = { /* TODO */ },
+            onClick = {
+                onClose()
+                onNavigateToAyuda()
+            },
             showArrow = true
         )
         

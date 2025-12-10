@@ -16,6 +16,7 @@ import com.idat.presentation.favoritos.FavoritosScreen
 import com.idat.presentation.personalizacion.PersonalizacionScreen
 import com.idat.presentation.configuracion.ConfiguracionScreen
 import com.idat.presentation.gestion.GestionProductosScreen
+import com.idat.presentation.ayuda.AyudaScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -28,6 +29,7 @@ fun AppNavigation(navController: NavHostController) {
         composable("personalizacion") { PersonalizacionScreen(navController) }
         composable("configuracion") { ConfiguracionScreen(navController) }
         composable("gestion") { GestionProductosScreen(navController) }
+        composable("ayuda") { AyudaScreen(navController) }
         composable(
             route = "detalle/{productoId}",
             arguments = listOf(navArgument("productoId") { type = NavType.IntType })
