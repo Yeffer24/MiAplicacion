@@ -1,5 +1,7 @@
 package com.idat.presentation.ayuda
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +32,7 @@ fun AyudaScreen(
     navController: NavHostController,
     viewModel: AyudaViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val expandedFaqId by viewModel.expandedFaqId.collectAsState()
     
@@ -123,20 +127,33 @@ fun AyudaScreen(
                 ContactCard(
                     icon = Icons.Default.Email,
                     title = "Email",
-                    subtitle = "soporte@hm.com",
+                    subtitle = "yeffercastillovega24@gmail.com",
                     backgroundColor = cardColor,
                     textColor = textColor,
                     textSecondaryColor = textSecondaryColor,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:yeffercastillovega24@gmail.com")
+                            putExtra(Intent.EXTRA_SUBJECT, "Consulta desde la app")
+                        }
+                        context.startActivity(intent)
+                    }
                 )
                 ContactCard(
                     icon = Icons.Default.Phone,
                     title = "Teléfono",
-                    subtitle = "+51 999 888 777",
+                    subtitle = "947837554",
                     backgroundColor = cardColor,
                     textColor = textColor,
                     textSecondaryColor = textSecondaryColor,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_DIAL).apply {
+                            data = Uri.parse("tel:947837554")
+                        }
+                        context.startActivity(intent)
+                    }
                 )
             }
 
@@ -241,20 +258,50 @@ fun AyudaScreen(
                     )
 
                     Button(
-                        onClick = { /* Aquí puedes abrir un chat o email */ },
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse("https://wa.me/51947837554?text=Hola,%20necesito%20ayuda%20con%20la%20aplicación")
+                            }
+                            context.startActivity(intent)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE50010)
+                            containerColor = Color(0xFF25D366)
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Icon(
                             Icons.Default.Chat,
-                            contentDescription = "Chat",
+                            contentDescription = "WhatsApp",
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Contactar Soporte")
+                        Text("Contactar por WhatsApp")
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("smsto:947837554")
+                                putExtra("sms_body", "Hola, necesito ayuda con la aplicación")
+                            }
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = textColor
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Sms,
+                            contentDescription = "SMS",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Enviar SMS")
                     }
                 }
             }
@@ -272,10 +319,11 @@ fun ContactCard(
     backgroundColor: Color,
     textColor: Color,
     textSecondaryColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor
