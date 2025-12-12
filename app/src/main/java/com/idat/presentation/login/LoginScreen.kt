@@ -120,11 +120,22 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                             .padding(bottom = 32.dp)
                     )
 
+                    // Título Email
+                    Text(
+                        text = "Usuario o Correo electrónico",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
+
                     // Campo Email
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Usuario o Correo electrónico") },
+                        placeholder = { Text("Ingresa tu correo", color = Color(0xFF999999)) },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -141,11 +152,22 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Título Password
+                    Text(
+                        text = "Contraseña",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
+
                     // Campo Password
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Contraseña") },
+                        placeholder = { Text("Ingresa tu contraseña", color = Color(0xFF999999)) },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
