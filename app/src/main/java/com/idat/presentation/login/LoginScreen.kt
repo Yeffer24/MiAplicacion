@@ -135,7 +135,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        placeholder = { Text("Ingresa tu correo", color = Color(0xFF999999)) },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -167,7 +166,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        placeholder = { Text("Ingresa tu contraseña", color = Color(0xFF999999)) },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
