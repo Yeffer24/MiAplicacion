@@ -124,7 +124,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
-                        label = { Text("Username or E-mail") },
+                        label = { Text("Usuario o Correo electrónico") },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -145,7 +145,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Password") },
+                        label = { Text("Contraseña") },
                         singleLine = true,
                         shape = RoundedCornerShape(4.dp),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -188,7 +188,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                                 )
                             )
                             Text(
-                                text = "Remember me",
+                                text = "Recuérdame",
                                 fontSize = 14.sp,
                                 color = Color(0xFF222222)
                             )
@@ -196,7 +196,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         
                         TextButton(onClick = { }) {
                             Text(
-                                text = "Forgot Password?",
+                                text = "¿Olvidaste tu contraseña?",
                                 fontSize = 14.sp,
                                 color = Color(0xFFE50010)
                             )
@@ -218,7 +218,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         )
                     ) {
                         Text(
-                            "Login",
+                            "Iniciar sesión",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -237,7 +237,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                             thickness = 1.dp
                         )
                         Text(
-                            text = "  Or  ",
+                            text = "  O  ",
                             fontSize = 14.sp,
                             color = Color(0xFF666666)
                         )
@@ -275,7 +275,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Continue with Google",
+                            text = "Continuar con Google",
                             fontSize = 16.sp
                         )
                     }
