@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -58,7 +61,11 @@ fun GestionProductosScreen(
                         containerColor = cardColor
                     ),
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { 
+                            navController.navigate("catalogo?openDrawer=true") {
+                                popUpTo("catalogo") { inclusive = true }
+                            }
+                        }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
@@ -228,10 +235,23 @@ fun GestionProductosScreen(
         mostrarDialogoEliminar?.let { producto ->
             AlertDialog(
                 onDismissRequest = { mostrarDialogoEliminar = null },
-                title = { Text("Eliminar Producto") },
-                text = { Text("¿Estás seguro de eliminar '${producto.nombre}'?") },
+                title = {
+                    Text(
+                        text = "Eliminar Producto",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF222222)
+                    )
+                },
+                text = {
+                    Text(
+                        text = "¿Estás seguro de eliminar '${producto.nombre}'? Esta acción no se puede deshacer.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF666666)
+                    )
+                },
                 confirmButton = {
-                    TextButton(
+                    Button(
                         onClick = {
                             viewModel.eliminarProducto(
                                 productoId = producto.id,
@@ -247,16 +267,40 @@ fun GestionProductosScreen(
                                     }
                                 }
                             )
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE50010),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Eliminar", color = Color.Red)
+                        Text(
+                            "Eliminar",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { mostrarDialogoEliminar = null }) {
-                        Text("Cancelar")
+                    OutlinedButton(
+                        onClick = { mostrarDialogoEliminar = null },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF222222)
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC)),
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Cancelar",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
-                }
+                },
+                containerColor = Color.White,
+                shape = RoundedCornerShape(0.dp)
             )
         }
     }
@@ -361,87 +405,221 @@ fun ProductoFormDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(titulo) },
+        title = {
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF222222)
+            )
+        },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
             ) {
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
-                    label = { Text("Nombre *") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = precio,
-                    onValueChange = { precio = it },
-                    label = { Text("Precio *") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = descripcion,
-                    onValueChange = { descripcion = it },
-                    label = { Text("Descripción") },
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 3
-                )
-                OutlinedTextField(
-                    value = categoria,
-                    onValueChange = { categoria = it },
-                    label = { Text("Categoría") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-                OutlinedTextField(
-                    value = imagen,
-                    onValueChange = { imagen = it },
-                    label = { Text("URL de Imagen") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
+                // Nombre
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Nombre *",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                    OutlinedTextField(
+                        value = nombre,
+                        onValueChange = { nombre = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC)
+                        )
+                    )
+                }
+
+                // Precio
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Precio *",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                    OutlinedTextField(
+                        value = precio,
+                        onValueChange = { precio = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC)
+                        )
+                    )
+                }
+
+                // Categoría
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Categoría",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                    OutlinedTextField(
+                        value = categoria,
+                        onValueChange = { categoria = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC)
+                        )
+                    )
+                }
+
+                // Descripción
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Descripción",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                    OutlinedTextField(
+                        value = descripcion,
+                        onValueChange = { descripcion = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 3,
+                        shape = RoundedCornerShape(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC)
+                        )
+                    )
+                }
+
+                // URL de Imagen
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "URL de Imagen",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                    OutlinedTextField(
+                        value = imagen,
+                        onValueChange = { imagen = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(4.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC)
+                        )
+                    )
+                }
+
+                // Calificación y Cantidad
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    OutlinedTextField(
-                        value = calificacion,
-                        onValueChange = { calificacion = it },
-                        label = { Text("Calificación (0-5)") },
+                    Column(
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true
-                    )
-                    OutlinedTextField(
-                        value = cantidadCalificaciones,
-                        onValueChange = { cantidadCalificaciones = it },
-                        label = { Text("# Calificaciones") },
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Calificación",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                        OutlinedTextField(
+                            value = calificacion,
+                            onValueChange = { calificacion = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            singleLine = true,
+                            shape = RoundedCornerShape(4.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF222222),
+                                unfocusedBorderColor = Color(0xFFCCCCCC)
+                            )
+                        )
+                    }
+                    Column(
                         modifier = Modifier.weight(1f),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true
-                    )
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Reseñas",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                        OutlinedTextField(
+                            value = cantidadCalificaciones,
+                            onValueChange = { cantidadCalificaciones = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            shape = RoundedCornerShape(4.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF222222),
+                                unfocusedBorderColor = Color(0xFFCCCCCC)
+                            )
+                        )
+                    }
                 }
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     val precioDouble = precio.toDoubleOrNull() ?: 0.0
                     val calificacionDouble = calificacion.toDoubleOrNull() ?: 0.0
                     val cantidadInt = cantidadCalificaciones.toIntOrNull() ?: 0
                     onGuardar(nombre, precioDouble, descripcion, categoria, imagen, calificacionDouble, cantidadInt)
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF222222),
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Guardar")
+                Text(
+                    "Guardar",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancelar")
+            OutlinedButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFF222222)
+                ),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC)),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Cancelar",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
-        }
+        },
+        containerColor = Color.White,
+        shape = RoundedCornerShape(0.dp)
     )
 }

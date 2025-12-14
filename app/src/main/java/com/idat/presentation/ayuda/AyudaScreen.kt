@@ -52,7 +52,11 @@ fun AyudaScreen(
                     ) 
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { 
+                        navController.navigate("catalogo?openDrawer=true") {
+                            popUpTo("catalogo") { inclusive = true }
+                        }
+                    }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver",

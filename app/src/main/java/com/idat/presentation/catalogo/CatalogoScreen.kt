@@ -37,13 +37,15 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogoScreen(
     navController: NavHostController,
-    viewModel: CatalogoViewModel = hiltViewModel()
+    viewModel: CatalogoViewModel = hiltViewModel(),
+    openDrawer: Boolean = false
 ) {
     val productos by viewModel.productos.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
@@ -54,6 +56,12 @@ fun CatalogoScreen(
 
     LaunchedEffect(Unit) {
         viewModel.cargarProductos()
+    }
+    
+    LaunchedEffect(openDrawer) {
+        if (openDrawer) {
+            drawerState.open()
+        }
     }
 
     val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
@@ -87,31 +95,31 @@ fun CatalogoScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("favoritos")
+                        navController.navigate("favoritos/fromDrawer")
                     },
                     onNavigateToPersonalizacion = {
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("personalizacion")
+                        navController.navigate("personalizacion/fromDrawer")
                     },
                     onNavigateToConfiguracion = {
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("configuracion")
+                        navController.navigate("configuracion/fromDrawer")
                     },
                     onNavigateToGestion = {
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("gestion")
+                        navController.navigate("gestion/fromDrawer")
                     },
                     onNavigateToAyuda = {
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("ayuda")
+                        navController.navigate("ayuda/fromDrawer")
                     }
                 )
             }
@@ -464,45 +472,57 @@ fun DialogoConfirmacionCerrarSesion(
 ) {
     AlertDialog(
         onDismissRequest = onCancelar,
-        icon = {
-            Icon(
-                Icons.Default.Logout,
-                contentDescription = "Cerrar Sesión",
-                modifier = Modifier.size(48.dp),
-                tint = Color(0xFFE100FF)
-            )
-        },
         title = {
             Text(
-                text = "¿Cerrar Sesión?",
+                text = "Cerrar Sesión",
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF222222)
             )
         },
         text = {
             Text(
-                text = "¿Estás seguro de que deseas cerrar sesión? Tendrás que volver a iniciar sesión para acceder a tu cuenta.",
-                style = MaterialTheme.typography.bodyLarge
+                text = "¿Estás seguro de que deseas cerrar sesión?",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF666666)
             )
         },
         confirmButton = {
             Button(
                 onClick = onConfirmar,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFE100FF)
+                    containerColor = Color(0xFF222222),
+                    contentColor = Color.White
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Sí, cerrar sesión")
+                Text(
+                    "Cerrar Sesión",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onCancelar) {
-                Text("Cancelar", color = Color.Gray)
+            OutlinedButton(
+                onClick = onCancelar,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFF222222)
+                ),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC)),
+                shape = RoundedCornerShape(4.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Cancelar",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
         },
         containerColor = Color.White,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(0.dp)
     )
 }
 

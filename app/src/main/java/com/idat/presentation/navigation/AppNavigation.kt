@@ -23,13 +23,23 @@ fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(navController) }
         composable("registro") { RegistroScreen(navController) }
-        composable("catalogo") { CatalogoScreen(navController) }
+        composable("catalogo") { CatalogoScreen(navController, openDrawer = false) }
+        composable(
+            route = "catalogo?openDrawer={openDrawer}",
+            arguments = listOf(navArgument("openDrawer") { 
+                type = NavType.BoolType
+                defaultValue = false
+            })
+        ) { backStackEntry ->
+            val openDrawer = backStackEntry.arguments?.getBoolean("openDrawer") ?: false
+            CatalogoScreen(navController, openDrawer = openDrawer)
+        }
         composable("carrito") { CarritoScreen(navController) }
-        composable("favoritos") { FavoritosScreen(navController) }
-        composable("personalizacion") { PersonalizacionScreen(navController) }
-        composable("configuracion") { ConfiguracionScreen(navController) }
-        composable("gestion") { GestionProductosScreen(navController) }
-        composable("ayuda") { AyudaScreen(navController) }
+        composable("favoritos/{from}") { FavoritosScreen(navController) }
+        composable("personalizacion/{from}") { PersonalizacionScreen(navController) }
+        composable("configuracion/{from}") { ConfiguracionScreen(navController) }
+        composable("gestion/{from}") { GestionProductosScreen(navController) }
+        composable("ayuda/{from}") { AyudaScreen(navController) }
         composable(
             route = "detalle/{productoId}",
             arguments = listOf(navArgument("productoId") { type = NavType.IntType })

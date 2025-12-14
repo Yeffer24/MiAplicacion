@@ -48,7 +48,11 @@ fun PersonalizacionScreen(
                         containerColor = cardColor
                     ),
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { 
+                            navController.navigate("catalogo?openDrawer=true") {
+                                popUpTo("catalogo") { inclusive = true }
+                            }
+                        }) {
                             Icon(
                                 Icons.Default.ArrowBack,
                                 contentDescription = "Volver",
