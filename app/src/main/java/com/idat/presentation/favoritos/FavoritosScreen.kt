@@ -1,23 +1,21 @@
 package com.idat.presentation.favoritos
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,88 +31,62 @@ fun FavoritosScreen(
     viewModel: FavoritosViewModel = hiltViewModel()
 ) {
     val productos by viewModel.favoritos.collectAsState()
-    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
 
-    val backgroundColor = if (isDarkTheme) Color(0xFF1C1C1C) else Color(0xFFFAFAFA)
-    val cardColor = if (isDarkTheme) Color(0xFF2C2C2C) else Color.White
-    val textColor = if (isDarkTheme) Color(0xFFFAFAFA) else Color(0xFF222222)
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-    ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Mis Favoritos", color = textColor, fontWeight = FontWeight.Bold) },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = cardColor
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = { 
-                            navController.navigate("catalogo?openDrawer=true") {
-                                popUpTo("catalogo") { inclusive = true }
-                            }
-                        }) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = "Volver",
-                                tint = textColor
-                            )
-                        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mis Favoritos", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
-            },
-            containerColor = backgroundColor
-        ) { paddingValues ->
-            if (productos.isEmpty()) {
-                // Sin favoritos
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        if (productos.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Favorite,
-                            contentDescription = "Sin favoritos",
-                            modifier = Modifier.size(100.dp),
-                            tint = Color(0xFFCCCCCC)
-                        )
-                        Text(
-                            text = "No tienes favoritos",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = Color(0xFF222222),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Agrega productos que te gusten",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color(0xFF666666)
-                        )
-                    }
+                    Icon(
+                        Icons.Default.Favorite,
+                        contentDescription = "Sin favoritos",
+                        modifier = Modifier.size(100.dp),
+                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                    )
+                    Text(
+                        text = "No tienes favoritos",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Agrega productos que te gusten para verlos aquí.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    )
                 }
-            } else {
-                // Lista de favoritos
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(productos) { producto ->
-                        FavoritoItem(
-                            producto = producto,
-                            onEliminar = { viewModel.eliminarDeFavoritos(producto.id) },
-                            onClick = {
-                                navController.navigate("detalle/${producto.id}")
-                            }
-                        )
-                    }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(productos, key = { it.id }) { producto ->
+                    FavoritoItem(
+                        producto = producto,
+                        onEliminar = { viewModel.eliminarDeFavoritos(producto.id) },
+                        onClick = { navController.navigate("detalle/${producto.id}") }
+                    )
                 }
             }
         }
@@ -128,71 +100,48 @@ fun FavoritoItem(
     onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Imagen
-            Image(
-                painter = rememberAsyncImagePainter(model = producto.imagen),
-                contentDescription = producto.nombre,
-                modifier = Modifier.size(100.dp)
-            )
-
-            // Información
+            Card(shape = RoundedCornerShape(8.dp)) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = producto.imagen),
+                    contentDescription = producto.nombre,
+                    modifier = Modifier.size(100.dp)
+                )
+            }
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 4.dp),
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
                     text = producto.nombre,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Normal,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF222222)
+                    overflow = TextOverflow.Ellipsis
                 )
-
                 Text(
                     text = "S/ ${producto.precio}",
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF222222)
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
                 )
-
                 Text(
                     text = producto.categoria,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF666666)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
-
-            // Botón eliminar
-            IconButton(
-                onClick = onEliminar,
-                modifier = Modifier.align(Alignment.Top)
-            ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Eliminar",
-                    tint = Color(0xFF999999)
-                )
+            IconButton(onClick = onEliminar) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = MaterialTheme.colorScheme.error)
             }
         }
     }
-    Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
 }

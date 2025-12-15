@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,13 +16,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,7 +31,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.idat.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltViewModel()) {
 
@@ -47,7 +43,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Google Sign-In Client configurado
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("944113440911-e6gprivm1354fnlqoi6dnpiibh75glml.apps.googleusercontent.com")
@@ -57,7 +52,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
 
-    // Launcher para el flujo de Google Sign-In
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -75,7 +69,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         }
     }
 
-    // Navegar cuando se loguea
     if (loginExitoso) {
         LaunchedEffect(Unit) {
             navController.navigate("catalogo") {
@@ -84,18 +77,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         }
     }
 
-    // Mostrar mensaje de error
     errorMessage?.let { message ->
         LaunchedEffect(message) {
-            snackbarHostState.showSnackbar(
-                message = message,
-                duration = SnackbarDuration.Long
-            )
+            snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Long)
         }
     }
 
     Scaffold(
-        containerColor = Color(0xFFF5EDE8),
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Box(
@@ -111,194 +100,163 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                     .padding(horizontal = 32.dp, vertical = 48.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                    // Logo H&M
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_logo_hm),
-                        contentDescription = "Logo H&M",
-                        modifier = Modifier
-                            .size(100.dp)
-                            .padding(bottom = 32.dp)
+                Image(
+                    painter = painterResource(id = R.drawable.logo_shoppe),
+                    contentDescription = "Logo ShopPe",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .padding(bottom = 32.dp)
+                )
+
+                Text(
+                    text = "Usuario o Correo electrónico",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                     )
+                )
 
-                    // Título Email
-                    Text(
-                        text = "Usuario o Correo electrónico",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF222222),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    // Campo Email
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        singleLine = true,
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF222222),
-                            unfocusedBorderColor = Color(0xFFCCCCCC),
-                            focusedLabelColor = Color(0xFF222222),
-                            unfocusedLabelColor = Color(0xFF666666),
-                            cursorColor = Color(0xFF222222),
-                            focusedTextColor = Color(0xFF222222),
-                            unfocusedTextColor = Color(0xFF222222)
-                        )
-                    )
+                Text(
+                    text = "Contraseña",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Título Password
-                    Text(
-                        text = "Contraseña",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF222222),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    )
-
-                    // Campo Password
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        singleLine = true,
-                        shape = RoundedCornerShape(4.dp),
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = {
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Icon(
-                                    imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                                    tint = Color(0xFF666666)
-                                )
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF222222),
-                            unfocusedBorderColor = Color(0xFFCCCCCC),
-                            focusedLabelColor = Color(0xFF222222),
-                            unfocusedLabelColor = Color(0xFF666666),
-                            cursorColor = Color(0xFF222222),
-                            focusedTextColor = Color(0xFF222222),
-                            unfocusedTextColor = Color(0xFF222222)
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Remember me y Forgot Password
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = false,
-                                onCheckedChange = { },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = Color(0xFFE50010),
-                                    uncheckedColor = Color(0xFF999999)
-                                )
-                            )
-                            Text(
-                                text = "Recuérdame",
-                                fontSize = 14.sp,
-                                color = Color(0xFF222222)
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = if (passwordVisible) "Ocultar" else "Mostrar",
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                         }
-                        
-                        TextButton(onClick = { }) {
-                            Text(
-                                text = "¿Olvidaste tu contraseña?",
-                                fontSize = 14.sp,
-                                color = Color(0xFFE50010)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = false,
+                            onCheckedChange = { },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = MaterialTheme.colorScheme.secondary,
+                                uncheckedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Botón Login
-                    Button(
-                        onClick = { viewModel.iniciarSesion(email, password) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE50010),
-                            contentColor = Color.White
                         )
-                    ) {
                         Text(
-                            "Iniciar sesión",
-                            fontSize = 16.sp,
+                            text = "Recuérdame",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    
+                    TextButton(onClick = { }) {
+                        Text(
+                            text = "¿Olvidaste tu contraseña?",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold
                         )
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    // Divider con "Or"
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Divider(
-                            modifier = Modifier.weight(1f),
-                            color = Color(0xFFCCCCCC),
-                            thickness = 1.dp
-                        )
-                        Text(
-                            text = "  O  ",
-                            fontSize = 14.sp,
-                            color = Color(0xFF666666)
-                        )
-                        Divider(
-                            modifier = Modifier.weight(1f),
-                            color = Color(0xFFCCCCCC),
-                            thickness = 1.dp
-                        )
-                    }
+                Button(
+                    onClick = { viewModel.iniciarSesion(email, password) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    )
+                ) {
+                    Text("Iniciar sesión", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                    // Botón Google
-                    OutlinedButton(
-                        onClick = {
-                            googleSignInClient.signOut().addOnCompleteListener {
-                                val signInIntent = googleSignInClient.signInIntent
-                                googleSignInLauncher.launch(signInIntent)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF222222)
-                        ),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC))
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_google),
-                            contentDescription = "Google",
-                            modifier = Modifier.size(20.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Continuar con Google",
-                            fontSize = 16.sp
-                        )
-                    }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
+                    Text("O", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                    Divider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        googleSignInClient.signOut().addOnCompleteListener {
+                            val signInIntent = googleSignInClient.signInIntent
+                            googleSignInLauncher.launch(signInIntent)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_google),
+                        contentDescription = "Google",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Unspecified
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "Continuar con Google",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     }
