@@ -257,6 +257,30 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                // Botón para registrarse
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "¿No tienes cuenta?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    TextButton(onClick = { navController.navigate("registro") }) {
+                        Text(
+                            text = "Regístrate",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
         }
     }
