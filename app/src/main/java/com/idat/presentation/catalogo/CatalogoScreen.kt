@@ -1,10 +1,12 @@
 package com.idat.presentation.catalogo
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -33,9 +35,12 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -50,6 +55,9 @@ fun CatalogoScreen(
     val productos by viewModel.productos.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val viewMode by viewModel.viewMode.collectAsState()
+    val categoriaSeleccionada by viewModel.categoriaSeleccionada.collectAsState()
+    val textoBusqueda by viewModel.textoBusqueda.collectAsState()
+    val categorias by viewModel.categorias.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var mostrarDialogoCerrarSesion by remember { mutableStateOf(false) }
@@ -157,38 +165,147 @@ fun CatalogoScreen(
                 },
                 containerColor = backgroundColor
             ) { paddingValues ->
-                if (viewMode == "grid") {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    // Barra de búsqueda
+                    OutlinedTextField(
+                        value = textoBusqueda,
+                        onValueChange = { viewModel.actualizarBusqueda(it) },
                         modifier = Modifier
-                            .padding(paddingValues)
-                            .padding(8.dp),
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        placeholder = { Text("Buscar productos...", color = textSecondaryColor) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Search,
+                                contentDescription = "Buscar",
+                                tint = textSecondaryColor
+                            )
+                        },
+                        trailingIcon = {
+                            if (textoBusqueda.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.actualizarBusqueda("") }) {
+                                    Icon(
+                                        Icons.Default.Close,
+                                        contentDescription = "Limpiar",
+                                        tint = textSecondaryColor
+                                    )
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(0.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF222222),
+                            unfocusedBorderColor = Color(0xFFCCCCCC),
+                            focusedTextColor = textPrimaryColor,
+                            unfocusedTextColor = textPrimaryColor,
+                            cursorColor = Color(0xFFE50010)
+                        )
+                    )
+                    
+                    // Categorías horizontales
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        contentPadding = PaddingValues(horizontal = 8.dp)
                     ) {
-                        items(productos) { producto ->
-                            ProductoGridItem(
-                                producto = producto,
-                                onAgregarAlCarrito = { viewModel.agregarAlCarrito(producto) },
-                                onClick = { navController.navigate("detalle/${producto.id}") },
-                                onToggleFavorito = { viewModel.toggleFavorito(producto) },
-                                viewModel = viewModel
+                        items(categorias.size) { index ->
+                            val categoria = categorias[index]
+                            FilterChip(
+                                selected = categoriaSeleccionada == categoria,
+                                onClick = { viewModel.seleccionarCategoria(categoria) },
+                                label = { 
+                                    Text(
+                                        categoria,
+                                        fontWeight = if (categoriaSeleccionada == categoria) FontWeight.SemiBold else FontWeight.Normal
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF222222),
+                                    selectedLabelColor = Color.White,
+                                    containerColor = if (isDarkTheme) cardColor else Color.White,
+                                    labelColor = textPrimaryColor
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = categoriaSeleccionada == categoria,
+                                    borderColor = Color(0xFFCCCCCC),
+                                    selectedBorderColor = Color(0xFF222222),
+                                    disabledBorderColor = Color(0xFFCCCCCC),
+                                    disabledSelectedBorderColor = Color(0xFF222222),
+                                    borderWidth = 1.dp,
+                                    selectedBorderWidth = 1.dp
+                                ),
+                                shape = RoundedCornerShape(0.dp)
                             )
                         }
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(paddingValues)
-                            .padding(vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        items(productos) { producto ->
-                            ProductoCard(
-                                producto = producto,
-                                onAgregarAlCarrito = { viewModel.agregarAlCarrito(producto) },
-                                onClick = { navController.navigate("detalle/${producto.id}") }
-                            )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    // Lista de productos
+                    if (productos.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = Color(0xFFCCCCCC)
+                                )
+                                Text(
+                                    "No se encontraron productos",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = textSecondaryColor,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    } else if (viewMode == "grid") {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(productos) { producto ->
+                                ProductoGridItem(
+                                    producto = producto,
+                                    onAgregarAlCarrito = { viewModel.agregarAlCarrito(producto) },
+                                    onClick = { navController.navigate("detalle/${producto.id}") },
+                                    onToggleFavorito = { viewModel.toggleFavorito(producto) },
+                                    viewModel = viewModel
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(productos) { producto ->
+                                ProductoCard(
+                                    producto = producto,
+                                    onAgregarAlCarrito = { viewModel.agregarAlCarrito(producto) },
+                                    onClick = { navController.navigate("detalle/${producto.id}") }
+                                )
+                            }
                         }
                     }
                 }
@@ -338,7 +455,7 @@ fun DrawerPerfil(
 
 @Composable
 fun DrawerMenuItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     text: String,
     onClick: () -> Unit,
     textColor: Color = Color(0xFF222222),
@@ -510,7 +627,7 @@ fun DialogoConfirmacionCerrarSesion(
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color(0xFF222222)
                 ),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFCCCCCC)),
+                border = BorderStroke(1.dp, Color(0xFFCCCCCC)),
                 shape = RoundedCornerShape(4.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
